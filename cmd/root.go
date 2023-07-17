@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/yellow-sky/orap/common"
 	"github.com/yellow-sky/orap/conf"
 	"os"
 )
@@ -20,7 +21,7 @@ var rootCmd = &cobra.Command{
 	Use:     "orap",
 	Short:   "OrangePi Access Point",
 	Long:    `Simple service for organize access point with OrangePi board`,
-	Version: "0.0.1",
+	Version: common.ORAP_VERSION,
 	//	Run: func(cmd *cobra.Command, args []string) { },
 }
 
