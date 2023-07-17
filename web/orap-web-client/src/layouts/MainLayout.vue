@@ -45,6 +45,11 @@ const menuItems = [
     linkName: 'Dashboard'
   },
   {
+    title: 'Devices',
+    icon: 'lan',
+    linkName: 'Devices'
+  },
+  {
     title: 'Logout',
     icon: 'logout',
     linkName: 'Logout'

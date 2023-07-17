@@ -9,6 +9,37 @@ definitions:
       status:
         type: integer
     type: object
+  api.DeviceShortInfo:
+    properties:
+      auto_connect:
+        type: boolean
+      driver:
+        type: string
+      driver_version:
+        type: string
+      firmware_missing:
+        type: boolean
+      fw_version:
+        type: string
+      id:
+        type: string
+      interface:
+        type: string
+      managed:
+        type: boolean
+      mtu:
+        type: integer
+      nm_plugin_missing:
+        type: boolean
+      physical_port_id:
+        type: string
+      real:
+        type: boolean
+      state:
+        type: string
+      type:
+        type: string
+    type: object
   api.ModemShortInfo:
     properties:
       id:
@@ -50,6 +81,79 @@ paths:
       summary: User Login method
       tags:
       - auth
+  /devices:
+    get:
+      consumes:
+      - application/json
+      description: 'Get list of devices with short info: id, name, description and
+        connection state.'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Common JSON response with list of devices
+          schema:
+            allOf:
+            - $ref: '#/definitions/api.CommonResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/api.DeviceShortInfo'
+                  type: array
+              type: object
+        "401":
+          description: Unauthorized error
+          schema:
+            $ref: '#/definitions/api.CommonResponse'
+        "500":
+          description: Unhandled server error
+          schema:
+            $ref: '#/definitions/api.CommonResponse'
+      security:
+      - BasicAuth: []
+      summary: List of network devices
+      tags:
+      - devices_info
+  /devices/{device_id}:
+    get:
+      consumes:
+      - application/json
+      description: 'Get info about device: common info, state, etc.'
+      parameters:
+      - description: Device id from list of devices
+        in: path
+        name: device_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Common JSON response with modem detailed info as data
+          schema:
+            allOf:
+            - $ref: '#/definitions/api.CommonResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "401":
+          description: Unauthorized error
+          schema:
+            $ref: '#/definitions/api.CommonResponse'
+        "404":
+          description: Device not found error
+          schema:
+            $ref: '#/definitions/api.CommonResponse'
+        "500":
+          description: Unhandled server error
+          schema:
+            $ref: '#/definitions/api.CommonResponse'
+      security:
+      - BasicAuth: []
+      summary: Device detailed information
+      tags:
+      - devices_info
   /modems:
     get:
       consumes:
@@ -132,5 +236,7 @@ tags:
   name: auth
 - description: Common operations
   name: common
+- description: Devices info operations
+  name: devices_info
 - description: Modems info operations
   name: modems_info

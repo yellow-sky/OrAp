@@ -75,6 +75,128 @@ var doc = `{
                 }
             }
         },
+        "/devices": {
+            "get": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get list of devices with short info: id, name, description and connection state.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "devices_info"
+                ],
+                "summary": "List of network devices",
+                "responses": {
+                    "200": {
+                        "description": "Common JSON response with list of devices",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/api.CommonResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/api.DeviceShortInfo"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized error",
+                        "schema": {
+                            "$ref": "#/definitions/api.CommonResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Unhandled server error",
+                        "schema": {
+                            "$ref": "#/definitions/api.CommonResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/devices/{device_id}": {
+            "get": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get info about device: common info, state, etc.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "devices_info"
+                ],
+                "summary": "Device detailed information",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Device id from list of devices",
+                        "name": "device_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Common JSON response with modem detailed info as data",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/api.CommonResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized error",
+                        "schema": {
+                            "$ref": "#/definitions/api.CommonResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Device not found error",
+                        "schema": {
+                            "$ref": "#/definitions/api.CommonResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Unhandled server error",
+                        "schema": {
+                            "$ref": "#/definitions/api.CommonResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/modems": {
             "get": {
                 "security": [
@@ -213,6 +335,53 @@ var doc = `{
                 }
             }
         },
+        "api.DeviceShortInfo": {
+            "type": "object",
+            "properties": {
+                "auto_connect": {
+                    "type": "boolean"
+                },
+                "driver": {
+                    "type": "string"
+                },
+                "driver_version": {
+                    "type": "string"
+                },
+                "firmware_missing": {
+                    "type": "boolean"
+                },
+                "fw_version": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "interface": {
+                    "type": "string"
+                },
+                "managed": {
+                    "type": "boolean"
+                },
+                "mtu": {
+                    "type": "integer"
+                },
+                "nm_plugin_missing": {
+                    "type": "boolean"
+                },
+                "physical_port_id": {
+                    "type": "string"
+                },
+                "real": {
+                    "type": "boolean"
+                },
+                "state": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "api.ModemShortInfo": {
             "type": "object",
             "properties": {
@@ -235,6 +404,10 @@ var doc = `{
         {
             "description": "Common operations",
             "name": "common"
+        },
+        {
+            "description": "Devices info operations",
+            "name": "devices_info"
         },
         {
             "description": "Modems info operations",

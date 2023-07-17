@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/Wifx/gonetworkmanager/v2"
 	"github.com/maltegrosse/go-modemmanager"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -54,6 +55,12 @@ func startServe() {
 	}
 
 	// Init services
+	nmgr, err := gonetworkmanager.NewNetworkManager()
+	if err != nil {
+		log.Errorf("Error on create network manager: %s", err.Error())
+		os.Exit(5)
+		return
+	}
 	mmgr, err := modemmanager.NewModemManager()
 	if err != nil {
 		log.Errorf("Error on create modem manager: %s", err.Error())
@@ -63,7 +70,7 @@ func startServe() {
 	authService := auth.NewAuthService(authCfg)
 	server := server_app.NewServer(apiCfg)
 	web.InitWebService(server)
-	api.InitApiService(server, &authService, mmgr)
+	api.InitApiService(server, &authService, nmgr, mmgr)
 	server.GetRouter().PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 
 	// Start service

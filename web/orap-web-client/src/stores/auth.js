@@ -20,13 +20,13 @@ export const useAuthStore = defineStore('auth', {
         .then(function (resp) {
           const jwt = resp.data.data
           thisStore.jwt = jwt
-          //todo: set bearer token for api
+          api.defaults.headers.common = {'Authorization': `Bearer ${jwt}`}
           thisStore.authenticated = true
           return true
         })
         .catch(function (error) {
           thisStore.jwt = ''
-          //todo: set bearer token for api
+          api.defaults.headers.common = {'Authorization': ''}
           thisStore.authenticated = false
           console.log('[Error on login] ', error)
           //if (error.response.status === 401) {
@@ -37,7 +37,7 @@ export const useAuthStore = defineStore('auth', {
     logout() {
       this.authenticated = false
       this.jwt = ''
-      //todo: clean bearer token for api
+      api.defaults.headers.common = {'Authorization': ''}
       this.router.push({name: 'Login'})
     },
     initInterceptor() {
