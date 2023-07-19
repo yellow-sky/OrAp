@@ -11,30 +11,12 @@ definitions:
     type: object
   api.DeviceShortInfo:
     properties:
-      auto_connect:
-        type: boolean
       driver:
-        type: string
-      driver_version:
-        type: string
-      firmware_missing:
-        type: boolean
-      fw_version:
         type: string
       id:
         type: string
       interface:
         type: string
-      managed:
-        type: boolean
-      mtu:
-        type: integer
-      nm_plugin_missing:
-        type: boolean
-      physical_port_id:
-        type: string
-      real:
-        type: boolean
       state:
         type: string
       type:
@@ -45,12 +27,96 @@ definitions:
       id:
         type: string
     type: object
+  nm_connection_manager.NmCommonSettings:
+    properties:
+      autoconnect:
+        type: string
+      id:
+        type: string
+      permissions:
+        items:
+          type: string
+        type: array
+      timestamp:
+        type: integer
+      type:
+        type: string
+      uuid:
+        type: string
+    type: object
+  nm_connection_manager.NmWifiConnectionSettings:
+    properties:
+      802-11-wireless:
+        $ref: '#/definitions/nm_connection_manager.NmWirelessSettings'
+      802-11-wireless-security:
+        $ref: '#/definitions/nm_connection_manager.NmWirelessSecuritySettings'
+      connection:
+        $ref: '#/definitions/nm_connection_manager.NmCommonSettings'
+    type: object
+  nm_connection_manager.NmWirelessSecuritySettings:
+    properties:
+      key-mgmt:
+        type: string
+    type: object
+  nm_connection_manager.NmWirelessSettings:
+    properties:
+      mac-address:
+        type: string
+      mac-address-blacklist:
+        items:
+          type: string
+        type: array
+      mode:
+        type: string
+      security:
+        type: string
+      seen-bssids:
+        items:
+          type: string
+        type: array
+      ssid:
+        description: SSID              []uint8  `mapstructure:"ssid"`
+        type: string
+    type: object
 info:
   contact: {}
   description: API for network management - AP, ethernet, modems.
   title: OrAP Service API
   version: "0.1"
 paths:
+  /ap/connections:
+    get:
+      consumes:
+      - application/json
+      description: 'Get list of AP connection settings with short info: id, name,
+        description and connection state.'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Common JSON response with list of AP connections
+          schema:
+            allOf:
+            - $ref: '#/definitions/api.CommonResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/nm_connection_manager.NmWifiConnectionSettings'
+                  type: array
+              type: object
+        "401":
+          description: Unauthorized error
+          schema:
+            $ref: '#/definitions/api.CommonResponse'
+        "500":
+          description: Unhandled server error
+          schema:
+            $ref: '#/definitions/api.CommonResponse'
+      security:
+      - BasicAuth: []
+      summary: List of AP connections
+      tags:
+      - ap_info
   /auth/token:
     post:
       consumes:

@@ -4,12 +4,14 @@ go 1.20
 
 require (
 	github.com/Wifx/gonetworkmanager/v2 v2.1.0
+	github.com/google/uuid v1.3.0
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
 	github.com/hashicorp/go-uuid v1.0.2
 	github.com/koron/go-spafs v0.0.0-20170714043237-5c4599f70672
 	github.com/kr/pretty v0.3.1
 	github.com/maltegrosse/go-modemmanager v0.1.0
+	github.com/mitchellh/mapstructure v1.5.0
 	github.com/shaj13/go-guardian/v2 v2.11.5
 	github.com/shaj13/libcache v1.0.0
 	github.com/sirupsen/logrus v1.9.3
@@ -62,7 +64,6 @@ require (
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
-	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.8 // indirect

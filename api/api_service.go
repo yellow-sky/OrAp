@@ -33,7 +33,10 @@ type ApiService struct{}
 
 var log = logrus.WithField("module", "api")
 
-func InitApiService(server *server_app.Server, authService *auth.AuthService, nmgr gonetworkmanager.NetworkManager, mmgr modemmanager.ModemManager) *ApiService {
+func InitApiService(server *server_app.Server,
+	authService *auth.AuthService,
+	nmgr gonetworkmanager.NetworkManager,
+	mmgr modemmanager.ModemManager) *ApiService {
 	// Init ApiService
 	apiService := ApiService{}
 
@@ -56,7 +59,7 @@ func InitApiService(server *server_app.Server, authService *auth.AuthService, nm
 	apiSubrouter.HandleFunc("/auth/token", apiService.handleAuthToken(authService)).Methods(http.MethodPost)
 
 	// common
-	//apiSubrouter.HandleFunc("/metadata", apiService.handleMetadata(webRtcSettings.IceServer))
+	//apiSubrouter.HandleFunc("/metadata", apiService.handleMetadata())
 
 	// modems
 	apiSubrouter.HandleFunc("/modems/", apiService.handleModemsList(mmgr)).Methods(http.MethodGet)
@@ -69,6 +72,9 @@ func InitApiService(server *server_app.Server, authService *auth.AuthService, nm
 	devicesSubrouter := apiSubrouter.PathPrefix("/devices/{device_id}").Subrouter()
 	devicesSubrouter.Use(apiService.createDevicesMiddleware(nmgr))
 	devicesSubrouter.HandleFunc("/", apiService.handleDeviceInfo()).Methods(http.MethodGet)
+
+	// ap
+	apiSubrouter.HandleFunc("/ap/connections", apiService.handleApConnectionsList()).Methods(http.MethodGet)
 
 	return &apiService
 }
