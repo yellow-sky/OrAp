@@ -2,32 +2,31 @@ package api
 
 import (
 	"context"
-	"github.com/Wifx/gonetworkmanager/v2"
 	"github.com/gorilla/mux"
+	nm_dev_man "github.com/yellow-sky/orap/nm_device_manager"
 	"net/http"
-	"path"
 )
 
-func (s ApiService) createDevicesMiddleware(nmgr gonetworkmanager.NetworkManager) func(next http.Handler) http.Handler {
+func (s ApiService) createDevicesMiddleware() func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(
 			func(w http.ResponseWriter, r *http.Request) {
 				deviceId := mux.Vars(r)["device_id"]
 
-				var device gonetworkmanager.Device
-				devices, err := nmgr.GetPropertyAllDevices()
+				devManager, err := nm_dev_man.NewNmDeviceManager()
 				if err != nil {
-					resp := CommonResponse{Status: http.StatusInternalServerError, Error: "Error on get devices: " + err.Error()}
+					resp := CommonResponse{Status: http.StatusInternalServerError, Error: "Error on init device manager: " + err.Error()}
 					s.writeCommonJsonResponse(w, resp)
 					return
 				}
-				for _, sysDevice := range devices {
-					sysDeviceId := path.Base(string(sysDevice.GetPath()))
-					if deviceId == sysDeviceId {
-						device = sysDevice
-						break
-					}
+
+				device, err := devManager.GetDeviceById(deviceId)
+				if err != nil {
+					resp := CommonResponse{Status: http.StatusInternalServerError, Error: "Error on get device by id: " + err.Error()}
+					s.writeCommonJsonResponse(w, resp)
+					return
 				}
+
 				if device == nil {
 					resp := CommonResponse{Status: http.StatusNotFound, Error: "Device with such id not found"}
 					s.writeCommonJsonResponse(w, resp)

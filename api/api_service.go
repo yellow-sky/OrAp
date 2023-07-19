@@ -1,7 +1,6 @@
 package api
 
 import (
-	"github.com/Wifx/gonetworkmanager/v2"
 	"github.com/gorilla/handlers"
 	"github.com/maltegrosse/go-modemmanager"
 	"github.com/sirupsen/logrus"
@@ -35,7 +34,6 @@ var log = logrus.WithField("module", "api")
 
 func InitApiService(server *server_app.Server,
 	authService *auth.AuthService,
-	nmgr gonetworkmanager.NetworkManager,
 	mmgr modemmanager.ModemManager) *ApiService {
 	// Init ApiService
 	apiService := ApiService{}
@@ -68,9 +66,9 @@ func InitApiService(server *server_app.Server,
 	modemsSubrouter.HandleFunc("/", apiService.handleModemInfo()).Methods(http.MethodGet)
 
 	// devices
-	apiSubrouter.HandleFunc("/devices/", apiService.handleDevicesList(nmgr)).Methods(http.MethodGet)
+	apiSubrouter.HandleFunc("/devices/", apiService.handleDevicesList()).Methods(http.MethodGet)
 	devicesSubrouter := apiSubrouter.PathPrefix("/devices/{device_id}").Subrouter()
-	devicesSubrouter.Use(apiService.createDevicesMiddleware(nmgr))
+	devicesSubrouter.Use(apiService.createDevicesMiddleware())
 	devicesSubrouter.HandleFunc("/", apiService.handleDeviceInfo()).Methods(http.MethodGet)
 
 	// ap

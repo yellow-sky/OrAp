@@ -2,19 +2,9 @@ package api
 
 import (
 	nm "github.com/Wifx/gonetworkmanager/v2"
-	"golang.org/x/exp/slices"
+	nm_dev_man "github.com/yellow-sky/orap/nm_device_manager"
 	"net/http"
-	"path"
-	"strings"
 )
-
-type DeviceShortInfo struct {
-	ID        string `json:"id"`
-	Interface string `json:"interface"`
-	Type      string `json:"type"`
-	Driver    string `json:"driver"`
-	State     string `json:"state"`
-}
 
 // handleDevicesList godoc
 // @Summary List of network devices
@@ -22,12 +12,12 @@ type DeviceShortInfo struct {
 // @Tags devices_info
 // @Accept  json
 // @Produce  json
-// @Success 200 {object} CommonResponse{data=[]api.DeviceShortInfo} "Common JSON response with list of devices"
+// @Success 200 {object} CommonResponse{data=[]nm_device_manager.DeviceShortInfo} "Common JSON response with list of devices"
 // @Failure 401 {object} CommonResponse{} "Unauthorized error"
 // @Failure 500 {object} CommonResponse{} "Unhandled server error"
 // @Security BasicAuth
 // @Router /devices [get]
-func (s ApiService) handleDevicesList(nmgr nm.NetworkManager) http.HandlerFunc {
+func (s ApiService) handleDevicesList() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// TODO: change to const or use as request filter
 		deviceTypeFilter := []nm.NmDeviceType{
@@ -41,53 +31,31 @@ func (s ApiService) handleDevicesList(nmgr nm.NetworkManager) http.HandlerFunc {
 			nm.NmDeviceTypeAdsl,
 			nm.NmDeviceTypeWifiP2p,
 		}
-		devices, err := nmgr.GetPropertyAllDevices()
+
+		devManager, err := nm_dev_man.NewNmDeviceManager()
+		if err != nil {
+			resp := CommonResponse{Status: http.StatusInternalServerError, Error: "Error on init device manager: " + err.Error()}
+			s.writeCommonJsonResponse(w, resp)
+			return
+		}
+
+		devices, err := devManager.GetFilteredDevices(deviceTypeFilter)
 		if err != nil {
 			resp := CommonResponse{Status: http.StatusInternalServerError, Error: "Error on get devices: " + err.Error()}
 			s.writeCommonJsonResponse(w, resp)
 			return
 		}
 
-		var devicesList []DeviceShortInfo
+		var devicesList []nm_dev_man.DeviceShortInfo
 		for _, device := range devices {
-			deviceId := path.Base(string(device.GetPath()))
-			deviceType, err := device.GetPropertyDeviceType()
+			deviceInfo, err := nm_dev_man.NewDeviceShortInfo(device)
 			if err != nil {
 				resp := CommonResponse{Status: http.StatusInternalServerError, Error: "Error on get device info: " + err.Error()}
 				s.writeCommonJsonResponse(w, resp)
 				return
 			}
-			if !slices.Contains(deviceTypeFilter, deviceType) {
-				continue
-			}
-			deviceInterface, err := device.GetPropertyInterface()
-			if err != nil {
-				resp := CommonResponse{Status: http.StatusInternalServerError, Error: "Error on get device info: " + err.Error()}
-				s.writeCommonJsonResponse(w, resp)
-				return
-			}
-			deviceDriver, err := device.GetPropertyDriver()
-			if err != nil {
-				resp := CommonResponse{Status: http.StatusInternalServerError, Error: "Error on get device info: " + err.Error()}
-				s.writeCommonJsonResponse(w, resp)
-				return
-			}
-			state, err := device.GetPropertyState()
-			if err != nil {
-				resp := CommonResponse{Status: http.StatusInternalServerError, Error: "Error on get device info: " + err.Error()}
-				s.writeCommonJsonResponse(w, resp)
-				return
-			}
-			deviceInfo := DeviceShortInfo{
-				ID:        deviceId,
-				Interface: deviceInterface,
-				Type:      strings.Replace(deviceType.String(), "NmDeviceType", "", 1),
-				Driver:    deviceDriver,
-				State:     strings.Replace(state.String(), "NmDeviceState", "", 1),
-			}
-			devicesList = append(devicesList, deviceInfo)
+			devicesList = append(devicesList, *deviceInfo)
 		}
-
 		resp := CommonResponse{Data: devicesList, Status: http.StatusOK}
 		s.writeCommonJsonResponse(w, resp)
 	}

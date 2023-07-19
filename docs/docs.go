@@ -162,7 +162,7 @@ var doc = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/api.DeviceShortInfo"
+                                                "$ref": "#/definitions/nm_device_manager.DeviceShortInfo"
                                             }
                                         }
                                     }
@@ -224,7 +224,7 @@ var doc = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "string"
+                                            "$ref": "#/definitions/nm_device_manager.DeviceDetailedInfo"
                                         }
                                     }
                                 }
@@ -390,26 +390,6 @@ var doc = `{
                 }
             }
         },
-        "api.DeviceShortInfo": {
-            "type": "object",
-            "properties": {
-                "driver": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "interface": {
-                    "type": "string"
-                },
-                "state": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                }
-            }
-        },
         "api.ModemShortInfo": {
             "type": "object",
             "properties": {
@@ -492,6 +472,73 @@ var doc = `{
                 },
                 "ssid": {
                     "description": "SSID              []uint8  ` + "`" + `mapstructure:\"ssid\"` + "`" + `",
+                    "type": "string"
+                }
+            }
+        },
+        "nm_device_manager.DeviceDetailedInfo": {
+            "type": "object",
+            "properties": {
+                "auto_connect": {
+                    "type": "boolean"
+                },
+                "driver": {
+                    "type": "string"
+                },
+                "driver_version": {
+                    "type": "string"
+                },
+                "firmware_missing": {
+                    "type": "boolean"
+                },
+                "fw_version": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "interface": {
+                    "type": "string"
+                },
+                "managed": {
+                    "type": "boolean"
+                },
+                "mtu": {
+                    "type": "integer"
+                },
+                "nm_plugin_missing": {
+                    "type": "boolean"
+                },
+                "physical_port_id": {
+                    "type": "string"
+                },
+                "real": {
+                    "type": "boolean"
+                },
+                "state": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "nm_device_manager.DeviceShortInfo": {
+            "type": "object",
+            "properties": {
+                "driver": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "interface": {
+                    "type": "string"
+                },
+                "state": {
+                    "type": "string"
+                },
+                "type": {
                     "type": "string"
                 }
             }
