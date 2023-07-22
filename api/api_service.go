@@ -18,6 +18,8 @@ import (
 // @tag.description Auth operations
 // @tag.name common
 // @tag.description Common operations
+// @tag.name ap_info
+// @tag.description AP info operation
 // @tag.name devices_info
 // @tag.description Devices info operations
 //@tag.name modems_info
@@ -73,6 +75,8 @@ func InitApiService(server *server_app.Server,
 
 	// ap
 	apiSubrouter.HandleFunc("/ap/connections", apiService.handleApConnectionsList()).Methods(http.MethodGet)
+	apiSubrouter.HandleFunc("/ap/compatible_devices", apiService.handleApCompatibleDevicesList()).Methods(http.MethodGet)
+	apiSubrouter.HandleFunc("/ap/active", apiService.handleApActiveList()).Methods(http.MethodGet)
 
 	return &apiService
 }

@@ -5,9 +5,6 @@ import (
 	"golang.org/x/exp/slices"
 )
 
-const NM_CONNECTION_TYPE_WIFI = "802-11-wireless"
-const NM_WIRELESS_MODE_AP = "ap"
-
 type NmDeviceManager struct {
 	nmgr nm.NetworkManager
 }

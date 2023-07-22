@@ -1,6 +1,8 @@
 package nm_connection_manager
 
 import (
+	nm "github.com/Wifx/gonetworkmanager/v2"
+	"github.com/mitchellh/mapstructure"
 	"net"
 	"strings"
 )
@@ -18,4 +20,15 @@ type NmWirelessSettings struct {
 
 func (nm *NmWirelessSettings) FillJsonFields() {
 	nm.MacAddress = strings.ToUpper(nm.NmMacAddress.String())
+}
+
+func NewNmWirelessSettings(raw nm.ConnectionSettings) (*NmWirelessSettings, error) {
+	section, exists := raw["802-11-wireless"]
+	if exists {
+		connSettings := NmWirelessSettings{}
+		err := mapstructure.WeakDecode(section, &connSettings)
+		return &connSettings, err
+	} else {
+		return nil, nil
+	}
 }

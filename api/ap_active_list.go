@@ -5,18 +5,18 @@ import (
 	"net/http"
 )
 
-// handleApConnectionsList godoc
-// @Summary List of AP connections
-// @Description Get list of AP connection settings with short info: id, name, description and connection state.
+// handleApActiveList godoc
+// @Summary List of active AP
+// @Description Get list of active AP with info about Connection-Device
 // @Tags ap_info
 // @Accept  json
 // @Produce  json
-// @Success 200 {object} CommonResponse{data=[]nm_connection_manager.NmConnection} "Common JSON response with list of AP connections"
+// @Success 200 {object} CommonResponse{data=[]ap_manager.ActiveAp} "Common JSON response with list of active AP"
 // @Failure 401 {object} CommonResponse{} "Unauthorized error"
 // @Failure 500 {object} CommonResponse{} "Unhandled server error"
 // @Security BasicAuth
-// @Router /ap/connections [get]
-func (s ApiService) handleApConnectionsList() http.HandlerFunc {
+// @Router /ap/active [get]
+func (s ApiService) handleApActiveList() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		apManager, err := ap_manager.NewApManager()
 		if err != nil {
@@ -24,14 +24,15 @@ func (s ApiService) handleApConnectionsList() http.HandlerFunc {
 			s.writeCommonJsonResponse(w, resp)
 			return
 		}
-		apCons, err := apManager.GetApConnections()
+
+		activeAp, err := apManager.GetActiveAp()
 		if err != nil {
-			resp := CommonResponse{Status: http.StatusInternalServerError, Error: "Error on get AP connections: " + err.Error()}
+			resp := CommonResponse{Status: http.StatusInternalServerError, Error: "Error on get active AP: " + err.Error()}
 			s.writeCommonJsonResponse(w, resp)
 			return
 		}
 
-		resp := CommonResponse{Data: apCons, Status: http.StatusOK}
+		resp := CommonResponse{Data: activeAp, Status: http.StatusOK}
 		s.writeCommonJsonResponse(w, resp)
 	}
 }

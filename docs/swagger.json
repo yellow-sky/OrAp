@@ -8,6 +8,116 @@
     },
     "basePath": "/api",
     "paths": {
+        "/ap/active": {
+            "get": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get list of active AP with info about Connection-Device",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ap_info"
+                ],
+                "summary": "List of active AP",
+                "responses": {
+                    "200": {
+                        "description": "Common JSON response with list of active AP",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/api.CommonResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/ap_manager.ActiveAp"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized error",
+                        "schema": {
+                            "$ref": "#/definitions/api.CommonResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Unhandled server error",
+                        "schema": {
+                            "$ref": "#/definitions/api.CommonResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/ap/compatible_devices": {
+            "get": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get list of devices with short info: id, name, description and connection state.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ap_info"
+                ],
+                "summary": "List of network devices for AP",
+                "responses": {
+                    "200": {
+                        "description": "Common JSON response with list of devices",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/api.CommonResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/nm_device_manager.DeviceShortInfo"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized error",
+                        "schema": {
+                            "$ref": "#/definitions/api.CommonResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Unhandled server error",
+                        "schema": {
+                            "$ref": "#/definitions/api.CommonResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/ap/connections": {
             "get": {
                 "security": [
@@ -40,7 +150,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/nm_connection_manager.NmWifiConnectionSettings"
+                                                "$ref": "#/definitions/nm_connection_manager.NmConnection"
                                             }
                                         }
                                     }
@@ -361,12 +471,21 @@
         }
     },
     "definitions": {
+        "ap_manager.ActiveAp": {
+            "type": "object",
+            "properties": {
+                "connection_id": {
+                    "type": "string"
+                },
+                "device_id": {
+                    "type": "string"
+                }
+            }
+        },
         "api.CommonResponse": {
             "type": "object",
             "properties": {
-                "data": {
-                    "type": "object"
-                },
+                "data": {},
                 "error": {
                     "type": "string"
                 },
@@ -409,17 +528,20 @@
                 }
             }
         },
-        "nm_connection_manager.NmWifiConnectionSettings": {
+        "nm_connection_manager.NmConnection": {
             "type": "object",
             "properties": {
-                "802-11-wireless": {
-                    "$ref": "#/definitions/nm_connection_manager.NmWirelessSettings"
+                "common_settings": {
+                    "$ref": "#/definitions/nm_connection_manager.NmCommonSettings"
                 },
-                "802-11-wireless-security": {
+                "id": {
+                    "type": "string"
+                },
+                "wireless_security_settings": {
                     "$ref": "#/definitions/nm_connection_manager.NmWirelessSecuritySettings"
                 },
-                "connection": {
-                    "$ref": "#/definitions/nm_connection_manager.NmCommonSettings"
+                "wireless_settings": {
+                    "$ref": "#/definitions/nm_connection_manager.NmWirelessSettings"
                 }
             }
         },
@@ -542,6 +664,10 @@
         {
             "description": "Common operations",
             "name": "common"
+        },
+        {
+            "description": "AP info operation",
+            "name": "ap_info"
         },
         {
             "description": "Devices info operations",
