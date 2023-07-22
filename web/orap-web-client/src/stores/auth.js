@@ -16,7 +16,7 @@ export const useAuthStore = defineStore('auth', {
   actions: {
     async login (username, password) {
       const thisStore = this
-      return await api.post('auth/token', {}, {auth: {username: username, password: password}})
+      return await api.post('/api/auth/token', {}, {auth: {username: username, password: password}})
         .then(function (resp) {
           const jwt = resp.data.data
           thisStore.jwt = jwt

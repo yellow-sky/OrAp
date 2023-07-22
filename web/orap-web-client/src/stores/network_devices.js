@@ -19,7 +19,7 @@ export const useNetworkDevicesStore = defineStore('network-devices', {
     },
     async fetchDevices() {
       const thisStore = this
-      await api.get('devices')
+      await api.get('/api/devices')
         .then(function (resp) {
           const defs = resp.data.data
           defs.sort((a, b) => a.order - b.order)
