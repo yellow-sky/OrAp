@@ -11,13 +11,17 @@ env GOOS=linux GOARM=7 GOARCH=arm go build -o build/orap_armv7l
 ```shell
 env GOOS=linux GOARCH=arm64 go build -o build/orap_aarch64
 ```
+## Build for Linux & x86-64
 
+```shell
+env GOOS=linux GOARCH=amd64 go build -o build/orap_amd64
+```
 
 ## Update swagger docs  
 ```shell
 #swag init --parseDependency --parseDepth 2 -g api/api_service.go
-swag init -g api/api_service.go
-```
+ swag init -g api/api_service.go
+ ```
 
 ## TODO
  - Add speedtest backend (https://github.com/showwin/speedtest-go)
@@ -27,3 +31,4 @@ swag init -g api/api_service.go
  - Add ttl replacer (???)
  - Add ssl (???) (https://github.com/FiloSottile/mkcert)
  - Add system dependency checker (nm, mm, os, packages)
+ - Add qr code for wifi ap? (https://github.com/pseyfert/go-networkmanager-qrcode-generator)
