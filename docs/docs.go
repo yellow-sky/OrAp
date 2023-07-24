@@ -487,6 +487,9 @@ const docTemplate = `{
                 },
                 "device_id": {
                     "type": "string"
+                },
+                "id": {
+                    "type": "string"
                 }
             }
         },

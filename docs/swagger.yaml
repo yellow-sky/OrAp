@@ -6,6 +6,8 @@ definitions:
         type: string
       device_id:
         type: string
+      id:
+        type: string
     type: object
   api.CommonResponse:
     properties:
