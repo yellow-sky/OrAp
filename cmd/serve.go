@@ -4,12 +4,12 @@ import (
 	"github.com/maltegrosse/go-modemmanager"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/swaggo/http-swagger"
 	"github.com/yellow-sky/orap/api"
 	"github.com/yellow-sky/orap/auth"
 	"github.com/yellow-sky/orap/conf"
 	_ "github.com/yellow-sky/orap/docs"
 	"github.com/yellow-sky/orap/server_app"
+	"github.com/yellow-sky/orap/swagger"
 	"github.com/yellow-sky/orap/web"
 	"os"
 	"os/signal"
@@ -64,7 +64,7 @@ func startServe() {
 	server := server_app.NewServer(apiCfg)
 	web.InitWebService(server)
 	api.InitApiService(server, &authService, mmgr)
-	server.GetRouter().PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
+	swagger.InitSwaggerService(server)
 
 	// Start service
 	go server.Run()
