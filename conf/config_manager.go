@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	_ "github.com/spf13/viper/remote"
 	"reflect"
 	"strings"
 )
